@@ -6,7 +6,7 @@ using Tracker.Shared;
 namespace Api.Services;
 public class RepairJobsRepository(IConfiguration configuration) : IRepairJobsRepository
 {
-    private readonly string _connectionString = configuration.GetConnectionString("TrackerDb") ??
+    private readonly string _connectionString = configuration["TrackerDbConnection"] ??
                                                 throw new ArgumentNullException();
 
     public IEnumerable<RepairJob> GetAll()
