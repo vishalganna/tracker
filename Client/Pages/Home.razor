@@ -1,7 +1,53 @@
 ﻿@page "/"
+@using Tracker.Shared
+@inject HttpClient Http
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Home - Tracker</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Recent Repair Jobs</h1>
 
-Welcome to your new app.
+@if (_jobs == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Cost (Rs.)</th>
+                <th>Received (Rs.)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var job in _jobs)
+            {
+                <tr>
+                    <td>@job.Date.ToShortDateString()</td>
+                    <td>@job.Description</td>
+                    <td>@job.Cost</td>
+                    <td>@job.Received</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private RepairJob[]? _jobs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _jobs = await Http.GetFromJsonAsync<RepairJob[]>("/api/repairjobs") ?? new RepairJob[] { };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
+
+    }
+}
